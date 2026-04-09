@@ -29,7 +29,7 @@ public class CareerAPIController : ControllerBase
                 new
                 {
                     role = "user",
-                    content= $"Analyse the following CV and provide a summary of the candidate's skills, experience, and potential job matches. Return ONLY a JSON array with 'title' and 'desc' keys: \n\n{cvText}"
+                    content= $"Analyse the following CV text and provide potential job matches and suggest realistic career pivots. Return ONLY a JSON array with 'title' and 'desc' keys: \n\n{cvText}"
                 }
             },
         };
