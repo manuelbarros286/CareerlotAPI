@@ -5,6 +5,16 @@ using System.Text.Json;
 [Route("api/[controller]")]
 public class CareerAPIController : ControllerBase 
 {
+    public class CareerMatch
+    {
+        public string Title { get; set; }
+        public string Desc { get; set; }
+    }
+
+    public class CvRequest
+    {
+        public string CvText { get; set; }
+    }
     
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -16,8 +26,13 @@ public class CareerAPIController : ControllerBase
     }
 
     [HttpPost("analyse")]
-    public async Task<IActionResult> Analyse([FromBody] string cvText)
+    public async Task<IActionResult> Analyse([FromBody] CvRequest request)
     {
+        if (request == null || string.IsNullOrEmpty(request.CvText))
+        {
+            return BadRequest("CV text is required.");
+        }
+        
         var apiKey = _configuration["OpenRouter:ApiKey"];
         var url = "https://openrouter.ai/api/v1/chat/completions";
         
@@ -29,7 +44,7 @@ public class CareerAPIController : ControllerBase
                 new
                 {
                     role = "user",
-                    content= $"Analyse the following CV text and provide potential job matches and suggest realistic career pivots. Return ONLY a JSON array with 'title' and 'desc' keys: \n\n{cvText}"
+                    content= $"Analyse the following CV text and provide potential job matches and suggest realistic career pivots. Return ONLY a JSON array with 'title' and 'desc' keys: \n\n{request.CvText}"
                 }
             },
         };
@@ -50,16 +65,18 @@ public class CareerAPIController : ControllerBase
                                  .GetProperty("message")
                                  .GetProperty("content")
                                  .GetString();
+        var cleanJson = System.Text.RegularExpressions.Regex.Match(aiTextParse ?? "", @"\[[\s\S]*\]");
         
-        var cleanJson = System.Text.RegularExpressions.Regex.Match(aiTextParse, @"\[[\s\S]*\]").Value;
-        if(string.IsNullOrEmpty(cleanJson))
+        if(!cleanJson.Success)
         {
             return BadRequest("AI response did not contain valid JSON.");
         }
-        return Ok(cleanJson);
+        
+        var results = JsonSerializer.Deserialize<List<CareerMatch>>(cleanJson.Value, new JsonSerializerOptions 
+        { 
+            PropertyNameCaseInsensitive = true 
+        });
+
+        return Ok(results);
     }
-    
-    
-    [HttpGet]
-    public IActionResult Get() => Ok("API is working");
 }
