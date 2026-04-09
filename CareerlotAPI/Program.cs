@@ -15,6 +15,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddOpenApi();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -28,10 +29,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// 4. Map the Controller routes
 app.MapControllers();
 
-// You can keep or delete the weatherforecast MapGet logic below
-app.MapGet("/weatherforecast", () => { /* ... */ }).WithName("GetWeatherForecast");
 
 app.Run();

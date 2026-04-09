@@ -1,6 +1,6 @@
 @CareerlotAPI_HostAddress = http://localhost:5200
 
-GET {{CareerlotAPI_HostAddress}}/weatherforecast/
+GET {{CareerlotAPI_HostAddress}}/api/career/
 Accept: application/json
 
 ###

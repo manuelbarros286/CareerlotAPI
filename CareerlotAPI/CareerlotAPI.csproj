@@ -4,10 +4,18 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>dcdf8efb-c2b3-4b9a-a7b4-ffcc61c2973d</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
