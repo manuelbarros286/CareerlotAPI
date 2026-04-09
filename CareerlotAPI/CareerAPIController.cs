@@ -16,10 +16,10 @@ public class CareerAPIController : ControllerBase
     }
 
     [HttpPost("analyse")]
-    public async Task<IActionResult> Analyse([FromBody]  String cvText)
+    public async Task<IActionResult> Analyse([FromBody] string cvText)
     {
         var apiKey = _configuration["Gemini:ApiKey"];
-        var url = _configuration["https://googleapis.com{apiKey}"];
+        var url = _configuration[$"https://googleapis.com{apiKey}"];
         
         var requestBody = new
         {
@@ -30,12 +30,14 @@ public class CareerAPIController : ControllerBase
 
         var client =  _httpClientFactory.CreateClient();
         var response = await client.PostAsync(url, new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json"));
-        if(!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
-        
-        var JsonResponse = await response.Content.ReadAsStringAsync();
-        return Ok(JsonResponse);
+        if (!response.IsSuccessStatusCode) 
+        {
+            var errorDetails = await response.Content.ReadAsStringAsync();
+            return StatusCode((int)response.StatusCode, errorDetails);
+        }        
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        return Ok(jsonResponse);
     }
-    
     
     
     [HttpGet]
