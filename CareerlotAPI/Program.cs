@@ -24,9 +24,11 @@ app.UseCors("VitePolicy");
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+} 
+else
+{
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
 
 app.MapControllers();
 
